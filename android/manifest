@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0.0
+apiversion: 2
+architectures: armeabi armeabi-v7a x86
+description: spinmenu
+author: Rainer Knöterich
+license: Specify your license
+copyright: Copyright (c) 2017 by 
+
+# these should not be edited
+name: spinmenu
+moduleid: ti.spinmenu
+guid: c4d92f2b-0d4a-4463-8e5d-3f18e54d0854
+platform: android
+minsdk: 5.5.1.GA
