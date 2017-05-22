@@ -9,7 +9,13 @@ This is the Appcelerator Titanium version of [SpinMenu](https://github.com/Hitom
 
 ```javascript
 var SpinMenuView = require("ti.spinmenu").createSpinMenu({
-	views : [Ti.UI.View]
+	views : ["red","blue","orange","green","black"].map(function(color){
+		return Ti.UI.createView({
+			backgroundColor : color, 
+			width : 200,
+			height : 400
+		});
+	}),
 	onMoved : function() {
 	}
 });
