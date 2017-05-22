@@ -2,7 +2,7 @@
 
 This is the Appcelerator Titanium version of [SpinMenu](https://github.com/Hitomis/SpinMenu)
 
-![](https://github.com/AppWerft/SpinMenu/raw/master/preview/menu_cyclic.gif) ![](https://github.com/AppWerft/SpinMenu/raw/master/preview/menu_slop.gif)
+![](https://github.com/Hitomis/SpinMenu/raw/master/preview/menu_cyclic.gif) ![](https://github.com/Hitomis/SpinMenu/raw/master/preview/menu_slop.gif)
 
 
 ## Usage
