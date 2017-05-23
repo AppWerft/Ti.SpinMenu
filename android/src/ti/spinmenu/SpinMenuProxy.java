@@ -22,7 +22,6 @@ import org.appcelerator.titanium.view.TiUIView;
 import android.app.Activity;
 import android.os.Message;
 
-// This proxy can be created by calling Spinmenu.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = SpinmenuModule.class)
 public class SpinMenuProxy extends TiViewProxy {
 
@@ -45,40 +44,39 @@ public class SpinMenuProxy extends TiViewProxy {
 
 	@Override
 	public TiUIView createView(Activity activity) {
-		TiUIView view = new TiSpinMenu(this);
-		view.getLayoutParams().autoFillsHeight = true;
-		view.getLayoutParams().autoFillsWidth = true;
-		return view;
+		TiUIView spinmenu = new TiSpinMenu(this);
+		spinmenu.getLayoutParams().autoFillsHeight = true;
+		spinmenu.getLayoutParams().autoFillsWidth = true;
+		return spinmenu;
 	}
 
-	protected TiSpinMenu getView() {
+	protected TiSpinMenu getSpinMenu() {
 		return (TiSpinMenu) getOrCreateView();
 	}
 
-	// handling of messages between threads:
 	public boolean handleMessage(Message msg) {
 		boolean handled = false;
 		switch (msg.what) {
 		case MSG_MOVE_PREV:
-			// getView().movePrevious();
+			// getSpinMenu().movePrevious();
 			handled = true;
 			break;
 		case MSG_MOVE_NEXT:
-			// getView().moveNext();
+			// getSpinMenu().moveNext();
 			handled = true;
 			break;
 		case MSG_MOVE_TO:
-			// getView().flipTo(msg.obj);
+			// getSpinMenu().flipTo(msg.obj);
 			handled = true;
 			break;
 		case MSG_SET_CURRENT:
-			// getView().setCurrentPage(msg.obj);
+			// getSpinMenu().setCurrentPage(msg.obj);
 			handled = true;
 			break;
 		case MSG_SET_VIEWS: {
 			AsyncResult holder = (AsyncResult) msg.obj;
 			Object views = holder.getArg();
-			// getView().setViews(views);
+			// getSpinMenu().setViews(views);
 			holder.setResult(null);
 			handled = true;
 			break;
@@ -87,7 +85,8 @@ public class SpinMenuProxy extends TiViewProxy {
 			AsyncResult holder = (AsyncResult) msg.obj;
 			Object view = holder.getArg();
 			if (view instanceof TiViewProxy) {
-				// getView().addView((TiViewProxy) view);
+				TiViewProxy proxy = (TiViewProxy) view;
+				getSpinMenu().addView((TiViewProxy) view);
 				handled = true;
 			} else if (view != null) {
 				Log.w(LCAT,
@@ -101,7 +100,7 @@ public class SpinMenuProxy extends TiViewProxy {
 			AsyncResult holder = (AsyncResult) msg.obj;
 			Object view = holder.getArg();
 			if (view instanceof TiViewProxy) {
-				// getView().removeView((TiViewProxy) view);
+				getSpinMenu().removeView((TiViewProxy) view);
 				handled = true;
 			} else if (view != null) {
 				Log.w(LCAT,
@@ -112,11 +111,11 @@ public class SpinMenuProxy extends TiViewProxy {
 			break;
 		}
 		case MSG_PEAK_PREV:
-			// getView().peakPrevious((Boolean) msg.obj);
+			// getSpinMenu().peakPrevious((Boolean) msg.obj);
 			handled = true;
 			break;
 		case MSG_PEAK_NEXT:
-			// getView().peakNext((Boolean) msg.obj);
+			// getSpinMenu().peakNext((Boolean) msg.obj);
 			handled = true;
 			break;
 		default:
@@ -127,10 +126,10 @@ public class SpinMenuProxy extends TiViewProxy {
 
 	@Kroll.getProperty
 	@Kroll.method
-	public Object getViews() {
+	public Object getSpinMenus() {
 		List<TiViewProxy> list = new ArrayList<TiViewProxy>();
-		// return getView().getViews().toArray(new TiViewProxy[list.size()]);
-		return null; // TODO
+		return getSpinMenu().getSpinMenus().toArray(
+				new TiViewProxy[list.size()]);
 	}
 
 	@Kroll.setProperty
@@ -153,17 +152,6 @@ public class SpinMenuProxy extends TiViewProxy {
 	}
 
 	@Kroll.method
-	public void flipToView(Object view) {
-		getMainHandler().obtainMessage(MSG_MOVE_TO, view).sendToTarget();
-	}
-
-	@Kroll.method
-	public void movePrevious() {
-		getMainHandler().removeMessages(MSG_MOVE_PREV);
-		getMainHandler().sendEmptyMessage(MSG_MOVE_PREV);
-	}
-
-	@Kroll.method
 	public void moveNext() {
 		getMainHandler().removeMessages(MSG_MOVE_NEXT);
 		getMainHandler().sendEmptyMessage(MSG_MOVE_NEXT);
@@ -172,8 +160,8 @@ public class SpinMenuProxy extends TiViewProxy {
 	@Kroll.getProperty
 	@Kroll.method
 	public int getCurrentPage() {
-		// return getView().getCurrentPage();
-		return 0; // TODO
+		return getSpinMenu().getCurrentView();
+
 	}
 
 	@Kroll.setProperty
@@ -185,22 +173,18 @@ public class SpinMenuProxy extends TiViewProxy {
 	@Kroll.method
 	public void peakPrevious(@Kroll.argument(optional = true) Boolean arg) {
 		Boolean once = false;
-
 		if (arg != null) {
 			once = TiConvert.toBoolean(arg);
 		}
-
 		getMainHandler().obtainMessage(MSG_PEAK_PREV, once).sendToTarget();
 	}
 
 	@Kroll.method
 	public void peakNext(@Kroll.argument(optional = true) Boolean arg) {
 		Boolean once = false;
-
 		if (arg != null) {
 			once = TiConvert.toBoolean(arg);
 		}
-
 		getMainHandler().obtainMessage(MSG_PEAK_NEXT, once).sendToTarget();
 	}
 }

@@ -2,6 +2,7 @@ package com.hitomi.smlibrary;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.IdRes;
@@ -16,6 +17,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.List;
 
 import org.appcelerator.kroll.KrollDict;
 
+import ti.spinmenu.SpinMenuAdapter;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -34,7 +37,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * email : 196425254@qq.com
  */
 public class SpinMenu extends FrameLayout {
-	static final String TAG = "SpinMenu";
+	static final String LCAT = "SpinMenu";
 	static final String TAG_ITEM_CONTAINER = "tag_item_container";
 	static final String TAG_ITEM_PAGER = "tag_item_pager";
 	static final String TAG_ITEM_HINT = "tag_item_hint";
@@ -42,6 +45,26 @@ public class SpinMenu extends FrameLayout {
 	static final int MENU_STATE_CLOSED = -1;
 	static final int MENU_STATE_OPEN = 1;
 	static final int MENU_STATE_OPENED = 2;
+
+	private PagerAdapter adapter;
+	private int pageCount = 0;
+	// this will be the postion when there is not data
+	private static final int INVALID_PAGE_POSITION = -1;
+	private int currentPageIndex = INVALID_PAGE_POSITION;
+	private Recycler recycler = new Recycler();
+	private DataSetObserver dataSetObserver = new DataSetObserver() {
+
+		@Override
+		public void onChanged() {
+			// dataSetChanged(); not used!
+		}
+
+		@Override
+		public void onInvalidated() {
+			// dataSetInvalidated(); TODO
+		}
+
+	};
 
 	/**
 	 * The distance between the moving items
@@ -81,27 +104,12 @@ public class SpinMenu extends FrameLayout {
 	/**
 	 * Cache the collection of Fragments for {@link #pagerAdapter} Recycling use
 	 */
-	private List pagerObjects;
+	private List<Object> pagerObjects;
 
 	/**
 	 * Menu item collection
 	 */
 	private List<SMItemLayout> smItemLayoutList;
-
-	/**
-	 * Page title character set
-	 */
-	private List<String> hintStrList;
-
-	/**
-	 * Page title character size
-	 */
-	private int hintTextSize = 14;
-
-	/**
-	 * 页面标题字符颜色
-	 */
-	private int hintTextColor = Color.parseColor("#666666");
 
 	/**
 	 * The default ratio of the page when the menu is opened
@@ -174,20 +182,50 @@ public class SpinMenu extends FrameLayout {
 		 * typedArray.getColor(R.styleable.SpinMenu_hint_text_color,
 		 * hintTextColor); typedArray.recycle();
 		 */
-		pagerObjects = new ArrayList();
-		smItemLayoutList = new ArrayList<>();
+
+		pagerObjects = new ArrayList<Object>();
+		smItemLayoutList = new ArrayList<SMItemLayout>();
 		menuDetector = new GestureDetectorCompat(context, menuGestureListener);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
 			ViewConfiguration conf = ViewConfiguration.get(getContext());
 			touchSlop = conf.getScaledTouchSlop();
 		}
+		Log.d(LCAT, "SpinMenu created end");
+		onFinishInflate();
+	}
+
+	public void setAdapter(SpinMenuAdapter adapter) {
+		if (this.adapter != null) {
+			this.adapter.unregisterDataSetObserver(dataSetObserver);
+		}
+
+		// remove all the current views
+		// removeAllViews();
+
+		this.adapter = adapter;
+		pageCount = adapter == null ? 0 : this.adapter.getCount();
+
+		if (adapter != null) {
+			this.adapter.registerDataSetObserver(dataSetObserver);
+			Log.d("TiSpinMenue", "registerDataSetObserver");
+			// recycler.setViewTypeCount(this.adapter.getViewTypeCount()); TODO
+			recycler.invalidateScraps();
+		}
+
+		// TODO pretty confusing
+		// this will be correctly set in setFlipDistance method
+		currentPageIndex = INVALID_PAGE_POSITION;
+		// mFlipDistance = INVALID_FLIP_DISTANCE;
+		// setFlipDistance(0);
+
+		// updateEmptyStatus();
 	}
 
 	@Override
 	protected void onFinishInflate() {
 		super.onFinishInflate();
-
+		Log.d(LCAT, "onFinishInflate >>>>>>>>>>>>>");
 		@IdRes
 		final int smLayoutId = 0x6F060505;
 		ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
@@ -213,7 +251,7 @@ public class SpinMenu extends FrameLayout {
 					pagerWidth, pagerHeight);
 			SMItemLayout smItemLayout;
 			FrameLayout frameContainer;
-			TextView tvHint;
+
 			for (int i = 0; i < smItemLayoutList.size(); i++) {
 				smItemLayout = smItemLayoutList.get(i);
 				frameContainer = (FrameLayout) smItemLayout
@@ -278,7 +316,7 @@ public class SpinMenu extends FrameLayout {
 	}
 
 	/**
-	 * 根据手机的分辨率从 px(像素) 的单位转成为 sp
+	 * According to the resolution of the phone from px (pixels) units into sp
 	 * 
 	 * @param pxValue
 	 * @return
@@ -289,11 +327,13 @@ public class SpinMenu extends FrameLayout {
 	}
 
 	private void log(String log) {
-		Log.d(TAG, log);
+		Log.d(LCAT, log);
 	}
 
 	public void setFragmentAdapter(PagerAdapter adapter) {
 		if (pagerAdapter != null) {
+			log(" setFragmentAdapter  pagerAdapter != null "
+					+ adapter.getCount());
 			pagerAdapter.startUpdate(spinMenuLayout);
 			for (int i = 0; i < adapter.getCount(); i++) {
 				ViewGroup pager = (ViewGroup) spinMenuLayout.getChildAt(i)
@@ -304,10 +344,12 @@ public class SpinMenu extends FrameLayout {
 		}
 
 		int pagerCount = adapter.getCount();
-		if (pagerCount > spinMenuLayout.getMaxMenuItemCount())
+		if (pagerCount > spinMenuLayout.getMaxMenuItemCount()) {
+			log("Excepetion in setFragmentAdapter");
 			throw new RuntimeException(String.format(
 					"Fragment number can't be more than %d",
 					spinMenuLayout.getMaxMenuItemCount()));
+		}
 
 		pagerAdapter = adapter;
 
@@ -322,13 +364,13 @@ public class SpinMenu extends FrameLayout {
 		hintLinLayParams.topMargin = HINT_TOP_MARGIN;
 		pagerAdapter.startUpdate(spinMenuLayout);
 		for (int i = 0; i < pagerCount; i++) {
-			// 创建菜单父容器布局
+			// Create a menu parent container layout
 			SMItemLayout smItemLayout = new SMItemLayout(getContext());
 			smItemLayout.setId(i + 1);
 			smItemLayout.setGravity(Gravity.CENTER);
 			smItemLayout.setLayoutParams(itemLinLayParams);
 
-			// 创建包裹FrameLayout
+			// Create the package FrameLayout
 			FrameLayout frameContainer = new FrameLayout(getContext());
 			frameContainer.setId(pagerCount + i + 1);
 			frameContainer.setTag(TAG_ITEM_CONTAINER);
@@ -342,14 +384,14 @@ public class SpinMenu extends FrameLayout {
 			Object object = pagerAdapter.instantiateItem(framePager, i);
 
 			// 创建菜单标题 TextView
-			TextView tvHint = new TextView(getContext());
-			tvHint.setId(pagerCount * 3 + i + 1);
-			tvHint.setTag(TAG_ITEM_HINT);
-			tvHint.setLayoutParams(hintLinLayParams);
+			// TextView tvHint = new TextView(getContext());
+			// tvHint.setId(pagerCount * 3 + i + 1);
+			// tvHint.setTag(TAG_ITEM_HINT);
+			// tvHint.setLayoutParams(hintLinLayParams);
 
 			frameContainer.addView(framePager);
 			smItemLayout.addView(frameContainer);
-			smItemLayout.addView(tvHint);
+			// smItemLayout.addView(tvHint);
 			spinMenuLayout.addView(smItemLayout);
 
 			pagerObjects.add(object);
@@ -386,21 +428,13 @@ public class SpinMenu extends FrameLayout {
 		scaleRatio = scaleValue;
 	}
 
-	public void setHintTextSize(int textSize) {
-		hintTextSize = textSize;
-	}
-
-	public void setHintTextColor(int textColor) {
-		hintTextColor = textColor;
-	}
-
-	public void setHintTextStrList(List<String> hintTextList) {
-		hintStrList = hintTextList;
-	}
-
 	public void setOnSpinMenuStateChangeListener(
 			OnSpinMenuStateChangeListener listener) {
 		onSpinMenuStateChangeListener = listener;
+	}
+
+	public void setOnSpinSelectedListener(OnSpinSelectedListener listener) {
+		onSpinSelectedListener = listener;
 	}
 
 	public float getScaleRatio() {
