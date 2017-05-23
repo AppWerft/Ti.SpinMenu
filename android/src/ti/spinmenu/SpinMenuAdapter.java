@@ -7,11 +7,12 @@ import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-public class SpinMenuAdapter extends PageAdapter {
+public class SpinMenuAdapter extends PagerAdapter {
 	private final ArrayList<TiViewProxy> viewProxies;
 	protected final Context ctx;
 
@@ -25,18 +26,21 @@ public class SpinMenuAdapter extends PageAdapter {
 		return viewProxies.size();
 	}
 
-	@Override
 	public Object getItem(int position) {
 		return (position >= getCount()) ? null : viewProxies.get(position);
 	}
 
-	@Override
 	public long getItemId(int position) {
 		return position;
 	}
 
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		return viewProxies.get(position).getOrCreateView().getOuterView();
+	}
+
+	@Override
+	public boolean isViewFromObject(View arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -5,6 +5,10 @@ This is the Appcelerator Titanium version of [SpinMenu](https://github.com/Hitom
 ![](https://github.com/Hitomis/SpinMenu/raw/master/preview/menu_cyclic.gif) ![](https://github.com/Hitomis/SpinMenu/raw/master/preview/menu_slop.gif)
 
 
+## Constants
+
+
+
 ## Usage
 
 ```javascript
