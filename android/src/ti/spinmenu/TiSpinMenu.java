@@ -74,27 +74,10 @@ public class TiSpinMenu extends TiUIView implements
 		FragmentActivity activity = (FragmentActivity) proxy.getActivity();
 		adapter = new SpinMenuFragmentV4Adapter(
 				activity.getSupportFragmentManager());
-		PagerViewListener pagerViewListener = new PagerViewListener(
-				pagerTabProxy, viewPager, adapter);
-
-		adapter = new FragmentPagerAdapter(
-				((FragmentActivity) activity).getSupportFragmentManager()) {
-			@Override
-			public Fragment getItem(int position) {
-				return fragmentList.get(position);
-			}
-
-			@Override
-			public int getCount() {
-				return fragmentList.size();
-			}
-
-			@Override
-			public void notifyDataSetChanged() {
-				// do somethings
-				super.notifyDataSetChanged();
-			}
-		};
+		/*
+		 * PagerViewListener pagerViewListener = new PagerViewListener( proxy,
+		 * viewPager, adapter);
+		 */
 
 		Log.d(LCAT, "createSpinMenu()");
 		spinMenu = new SpinMenu(activity, new KrollDict(), 0); // extended from

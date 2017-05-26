@@ -1,30 +1,35 @@
 package ti.spinmenu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 /**
  * Author: Navid Ghahramani You can contact to me with
  * ghahramani.navid@gmail.com
  */
-public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter {
+public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter
+		implements ViewPagerDynamicAdapter {
 
-	private List<ViewPagerFragment> pagerFragments = new ArrayList<ViewPagerFragment>();
+	private List<SpinMenuFragment> pagerFragments = new ArrayList<SpinMenuFragment>();
 
-	public ViewPagerFragmentV4Adapter(FragmentManager fragmentManager) {
+	public SpinMenuFragmentV4Adapter(FragmentManager fragmentManager) {
 		super(fragmentManager);
 	}
 
 	@Override
-	public int addView(String title, View view) {
-		return addView(title, view, pagerFragments.size());
+	public int addView(View view) {
+		return addView(view, pagerFragments.size());
 	}
 
 	@Override
-	public int addView(String title, View view, int position) {
-		pagerFragments.add(position, new ViewPagerFragment(title, view));
+	public int addView(View view, int position) {
+		pagerFragments.add(position, new SpinMenuFragment(view));
 		notifyDataSetChanged();
 		return position;
 	}
@@ -32,7 +37,7 @@ public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter {
 	@Override
 	public int removeView(ViewPager viewPager, View view) {
 		for (int i = 0; i < pagerFragments.size(); i++) {
-			ViewPagerFragment fragment = pagerFragments.get(i);
+			SpinMenuFragment fragment = pagerFragments.get(i);
 			if (fragment.getContent().equals(view)) {
 				return removeView(viewPager, i);
 			}
@@ -63,10 +68,5 @@ public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter {
 	@Override
 	public int getCount() {
 		return pagerFragments.size();
-	}
-
-	@Override
-	public CharSequence getPageTitle(int position) {
-		return pagerFragments.get(position).getTitle();
 	}
 }
