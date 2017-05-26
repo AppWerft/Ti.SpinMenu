@@ -44,7 +44,7 @@ public class SpinMenuProxy extends TiViewProxy {
 
 	@Override
 	public TiUIView createView(Activity activity) {
-		TiUIView spinmenu = new TiSpinMenu(this);
+		TiUIView spinmenu = new TiSpinMenu(this, getProperties());
 		spinmenu.getLayoutParams().autoFillsHeight = true;
 		spinmenu.getLayoutParams().autoFillsWidth = true;
 		return spinmenu;

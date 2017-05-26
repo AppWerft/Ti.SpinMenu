@@ -1,13 +1,26 @@
 package ti.spinmenu;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.hitomi.smlibrary.*;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.common.Log;
+import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.util.TiConvert;
@@ -20,23 +33,79 @@ public class TiSpinMenu extends TiUIView implements
 
 	private SpinMenu spinMenu;
 	private final ArrayList<TiViewProxy> viewProxies;
-	private final SpinMenuAdapter adapter;
+	private ViewPager viewPager;
 	private int curIndex = 0;
+	final List<Fragment> fragmentList = new ArrayList<Fragment>();
+	SpinMenuFragmentV4Adapter adapter;
 
 	/* Constructor */
-	public TiSpinMenu(TiViewProxy proxy) {
+
+	public TiSpinMenu(final TiViewProxy proxy, KrollDict properties) {
+		this(proxy);
+		applyProperties(properties);
+	}
+
+	public TiSpinMenu(final TiViewProxy proxy) {
 		super(proxy);
-		Activity activity = proxy.getActivity();
+		// Activity activity = proxy.getActivity();
+
 		viewProxies = new ArrayList<TiViewProxy>();
-		adapter = new SpinMenuAdapter(activity, viewProxies);
 
-		spinMenu = new SpinMenu(activity); // extended from FrameLayout, same as
-											// FlipView
+		LinearLayout layout = new LinearLayout(proxy.getActivity());
+		layout.setOrientation(LinearLayout.VERTICAL);
+		setNativeView(layout);
 
-		spinMenu.setAdapter(adapter); // in flipView setAdapter!!
+		DisplayMetrics dm = proxy.getActivity().getResources()
+				.getDisplayMetrics();
+		FrameLayout.LayoutParams pagerSlidingTabStripLayoutParams = new FrameLayout.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT,
+				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+						48, dm));
 
+		ViewPager.LayoutParams viewPagerLayoutParams = new ViewPager.LayoutParams();
+		viewPagerLayoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
+		viewPagerLayoutParams.height = ViewPager.LayoutParams.MATCH_PARENT;
+
+		viewPager = new ViewPager(layout.getContext());
+		viewPager.setId(8889);
+
+		layout.addView(viewPager, viewPagerLayoutParams);
+
+		FragmentActivity activity = (FragmentActivity) proxy.getActivity();
+		adapter = new SpinMenuFragmentV4Adapter(
+				activity.getSupportFragmentManager());
+		PagerViewListener pagerViewListener = new PagerViewListener(
+				pagerTabProxy, viewPager, adapter);
+
+		adapter = new FragmentPagerAdapter(
+				((FragmentActivity) activity).getSupportFragmentManager()) {
+			@Override
+			public Fragment getItem(int position) {
+				return fragmentList.get(position);
+			}
+
+			@Override
+			public int getCount() {
+				return fragmentList.size();
+			}
+
+			@Override
+			public void notifyDataSetChanged() {
+				// do somethings
+				super.notifyDataSetChanged();
+			}
+		};
+
+		Log.d(LCAT, "createSpinMenu()");
+		spinMenu = new SpinMenu(activity, new KrollDict(), 0); // extended from
+																// FrameLayout,
+																// same
+																// as
 		spinMenu.setOnSpinMenuStateChangeListener(this);
 		spinMenu.setOnSpinSelectedListener(this);
+	}
+
+	public void applyProperties(KrollDict properties) {
 	}
 
 	public int getCurrentView() {

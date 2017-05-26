@@ -63,78 +63,26 @@ public class SpinMenu extends FrameLayout {
 		public void onInvalidated() {
 			// dataSetInvalidated(); TODO
 		}
-
 	};
 
-	/**
-	 * The distance between the moving items
-	 */
-	static final float TRAN_SKNEW_VALUE = 160;
-
-	/**
-	 * Hint is the top margin of the page
-	 */
-	static final int HINT_TOP_MARGIN = 15;
-
-	/**
-	 * Rotate, rotate the layout
-	 */
-	private SpinMenuLayout spinMenuLayout;
-
-	/**
-	 * The menu opens to close the animation help class
-	 */
-	private SpinMenuAnimator spinMenuAnimator;
-
-	/**
-	 * Page adapter
-	 */
+	static final float TRAN_SKNEW_VALUE = 160; // The distance between the
+												// moving items
+	static final int HINT_TOP_MARGIN = 15; // Hint is the top margin of the page
+	private SpinMenuLayout spinMenuLayout;// Rotate, rotate the layout
+	private SpinMenuAnimator spinMenuAnimator; // The menu opens to close the
+												// animation help class
 	private PagerAdapter pagerAdapter;
-
-	/**
-	 * Gesture recognizer
-	 */
 	private GestureDetectorCompat menuDetector;
-
-	/**
-	 * Menu status change listener
-	 */
 	private OnSpinMenuStateChangeListener onSpinMenuStateChangeListener;
-
-	/**
-	 * Cache the collection of Fragments for {@link #pagerAdapter} Recycling use
-	 */
-	private List<Object> pagerObjects;
-
-	/**
-	 * Menu item collection
-	 */
-	private List<SMItemLayout> smItemLayoutList;
-
-	/**
-	 * The default ratio of the page when the menu is opened
-	 */
-	private float scaleRatio = .36f;
-
-	/**
-	 * Whether the control is initializing the tag variable
-	 */
-	private boolean init = true;
-
-	/**
-	 * Whether gesture recognition is enabled
-	 */
-	private boolean enableGesture;
-
-	/**
-	 * The current menu status, which is turned off by default
-	 */
-	private int menuState = MENU_STATE_CLOSED;
-
-	/**
-	 * The threshold between sliding and touch
-	 */
-	private int touchSlop = 8;
+	private List<Object> pagerObjects; // Cache the collection of Fragments
+	private List<SMItemLayout> smItemLayoutList; // Menu item collection
+	private float scaleRatio = .36f; // menu is opened
+	private boolean init = true; // Whether the control is initializing the tag
+									// variable
+	private boolean enableGesture; // Whether gesture recognition is enabled
+	private int menuState = MENU_STATE_CLOSED; // The current menu status, which
+												// is turned off by default
+	private int touchSlop = 8; // The threshold between sliding and touch
 
 	private OnSpinSelectedListener onSpinSelectedListener = new OnSpinSelectedListener() {
 		@Override
@@ -162,6 +110,7 @@ public class SpinMenu extends FrameLayout {
 		}
 	};
 
+	/* Constructors */
 	public SpinMenu(Context context) {
 		this(context, new KrollDict());
 	}
@@ -172,6 +121,8 @@ public class SpinMenu extends FrameLayout {
 
 	public SpinMenu(Context context, KrollDict attrs, int defStyleAttr) {
 		super(context, null, defStyleAttr);
+		Log.d(LCAT, "SpinMenu(ctx,kd)");
+
 		/*
 		 * TypedArray typedArray = context.obtainStyledAttributes(attrs,
 		 * R.styleable.SpinMenu); scaleRatio =
@@ -182,7 +133,6 @@ public class SpinMenu extends FrameLayout {
 		 * typedArray.getColor(R.styleable.SpinMenu_hint_text_color,
 		 * hintTextColor); typedArray.recycle();
 		 */
-
 		pagerObjects = new ArrayList<Object>();
 		smItemLayoutList = new ArrayList<SMItemLayout>();
 		menuDetector = new GestureDetectorCompat(context, menuGestureListener);
@@ -191,21 +141,18 @@ public class SpinMenu extends FrameLayout {
 			ViewConfiguration conf = ViewConfiguration.get(getContext());
 			touchSlop = conf.getScaledTouchSlop();
 		}
-		Log.d(LCAT, "SpinMenu created end");
-		onFinishInflate();
+		Log.d(LCAT, "end of SpinMenu()");
+		onFinishInflate(); // manually call
+		onLayout(true, 0, 0, 0, 0);
 	}
 
 	public void setAdapter(SpinMenuAdapter adapter) {
 		if (this.adapter != null) {
 			this.adapter.unregisterDataSetObserver(dataSetObserver);
 		}
-
-		// remove all the current views
-		// removeAllViews();
-
+		// removeAllViews();// remove all the current views
 		this.adapter = adapter;
 		pageCount = adapter == null ? 0 : this.adapter.getCount();
-
 		if (adapter != null) {
 			this.adapter.registerDataSetObserver(dataSetObserver);
 			Log.d("TiSpinMenue", "registerDataSetObserver");
@@ -242,7 +189,6 @@ public class SpinMenu extends FrameLayout {
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
-
 		if (init && smItemLayoutList.size() > 0) {
 			// 根据 scaleRatio 去调整菜单中 item 视图的整体大小
 			int pagerWidth = (int) (getMeasuredWidth() * scaleRatio);
@@ -251,7 +197,6 @@ public class SpinMenu extends FrameLayout {
 					pagerWidth, pagerHeight);
 			SMItemLayout smItemLayout;
 			FrameLayout frameContainer;
-
 			for (int i = 0; i < smItemLayoutList.size(); i++) {
 				smItemLayout = smItemLayoutList.get(i);
 				frameContainer = (FrameLayout) smItemLayout
