@@ -1,6 +1,7 @@
 package ti.spinmenu;
 
 import java.util.ArrayList;
+import android.support.v4.view.PagerAdapter;
 import java.util.List;
 
 import android.support.v4.app.Fragment;
@@ -34,6 +35,10 @@ public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter
 		return position;
 	}
 
+	// -----------------------------------------------------------------------------
+	// Removes the "view" at "position" from "views".
+	// Retuns position of removed view.
+	// The app should call this to remove pages; not used by ViewPager.
 	@Override
 	public int removeView(ViewPager viewPager, View view) {
 		for (int i = 0; i < pagerFragments.size(); i++) {
@@ -45,6 +50,10 @@ public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter
 		return -1;
 	}
 
+	// -----------------------------------------------------------------------------
+	// Removes the "view" at "position" from "views".
+	// Retuns position of removed view.
+	// The app should call this to remove pages; not used by ViewPager.
 	@Override
 	public int removeView(ViewPager viewPager, int position) {
 		viewPager.setAdapter(null);
@@ -53,6 +62,9 @@ public class SpinMenuFragmentV4Adapter extends FragmentStatePagerAdapter
 		return position;
 	}
 
+	// -----------------------------------------------------------------------------
+	// Returns the "view" at "position".
+	// The app should call this to retrieve a view; not used by ViewPager.
 	@Override
 	public View getView(int position) {
 		return pagerFragments.get(position).getContent();

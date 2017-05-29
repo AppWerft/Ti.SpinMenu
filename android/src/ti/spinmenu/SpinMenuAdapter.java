@@ -7,10 +7,12 @@ import org.appcelerator.titanium.proxy.TiViewProxy;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SpinMenuAdapter extends PagerAdapter {
+public class SpinMenuAdapter extends PagerAdapter implements
+		ViewPagerDynamicAdapter {
 	private final ArrayList<TiViewProxy> viewProxies;
 	protected final Context ctx;
 
@@ -46,5 +48,35 @@ public class SpinMenuAdapter extends PagerAdapter {
 	public boolean isViewFromObject(View view, Object object) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public int addView(View view) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addView(View view, int position) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeView(ViewPager viewPager, View view) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeView(ViewPager viewPager, int position) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public View getView(int position) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

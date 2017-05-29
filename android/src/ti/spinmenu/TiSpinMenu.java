@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -31,12 +32,12 @@ public class TiSpinMenu extends TiUIView implements
 
 	public static final String LCAT = SpinmenuModule.LCAT;
 
+	private ViewPagerDynamicAdapter adapter;
+
 	private SpinMenu spinMenu;
 	private final ArrayList<TiViewProxy> viewProxies;
 	private ViewPager viewPager;
 	private int curIndex = 0;
-	final List<Fragment> fragmentList = new ArrayList<Fragment>();
-	SpinMenuFragmentV4Adapter adapter;
 
 	/* Constructor */
 
@@ -72,18 +73,13 @@ public class TiSpinMenu extends TiUIView implements
 		layout.addView(viewPager, viewPagerLayoutParams);
 
 		FragmentActivity activity = (FragmentActivity) proxy.getActivity();
+
 		adapter = new SpinMenuFragmentV4Adapter(
 				activity.getSupportFragmentManager());
-		/*
-		 * PagerViewListener pagerViewListener = new PagerViewListener( proxy,
-		 * viewPager, adapter);
-		 */
 
-		Log.d(LCAT, "createSpinMenu()");
-		spinMenu = new SpinMenu(activity, new KrollDict(), 0); // extended from
-																// FrameLayout,
-																// same
-																// as
+		spinMenu = new com.hitomi.smlibrary.SpinMenu(activity, new KrollDict(),
+				0); // extended from
+		spinMenu.setAdapter((SpinMenuAdapter) adapter);
 		spinMenu.setOnSpinMenuStateChangeListener(this);
 		spinMenu.setOnSpinSelectedListener(this);
 	}

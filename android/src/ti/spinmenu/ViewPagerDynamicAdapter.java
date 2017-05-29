@@ -10,6 +10,8 @@ import android.view.View;
 public interface ViewPagerDynamicAdapter {
 	public int addView(View view);
 
+	public void notifyDataSetChanged();
+
 	public int addView(View view, int position);
 
 	public int removeView(ViewPager viewPager, View view);
