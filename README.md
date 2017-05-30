@@ -19,9 +19,7 @@ var SpinMenuView = require("ti.spinmenu").createSpinMenu({
 			width : 200,
 			height : 400
 		});
-	}),
-	onMoved : function() {
-	}
+	})
 });
-
+SpinMenuView.addEventListener("spinselected",onSpinSelectedFn);
 ```
