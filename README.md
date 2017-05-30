@@ -7,7 +7,7 @@ This is the Appcelerator Titanium version of [SpinMenu](https://github.com/Hitom
 
 ## Constants
 
-
+no constants
 
 ## Usage
 

@@ -48,29 +48,23 @@ public class TiSpinMenu extends TiUIView implements
 
 	public TiSpinMenu(final TiViewProxy proxy) {
 		super(proxy);
-		// Activity activity = proxy.getActivity();
-
+		// list of all Viewproxies inside container
 		viewProxies = new ArrayList<TiViewProxy>();
-
-		LinearLayout layout = new LinearLayout(proxy.getActivity());
-		layout.setOrientation(LinearLayout.VERTICAL);
-		setNativeView(layout);
-
-		DisplayMetrics dm = proxy.getActivity().getResources()
-				.getDisplayMetrics();
-		FrameLayout.LayoutParams pagerSlidingTabStripLayoutParams = new FrameLayout.LayoutParams(
-				ViewGroup.LayoutParams.MATCH_PARENT,
-				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-						48, dm));
+		// new container
+		LinearLayout nativeView = new LinearLayout(proxy.getActivity());
+		nativeView.setOrientation(LinearLayout.VERTICAL);
+		// this container is the TiUIView
+		setNativeView(nativeView);
 
 		ViewPager.LayoutParams viewPagerLayoutParams = new ViewPager.LayoutParams();
 		viewPagerLayoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
 		viewPagerLayoutParams.height = ViewPager.LayoutParams.MATCH_PARENT;
 
-		viewPager = new ViewPager(layout.getContext());
+		viewPager = new ViewPager(nativeView.getContext());
 		viewPager.setId(8889);
 
-		layout.addView(viewPager, viewPagerLayoutParams);
+		// adding viewpager to our nativeView
+		nativeView.addView(viewPager, viewPagerLayoutParams);
 
 		FragmentActivity activity = (FragmentActivity) proxy.getActivity();
 
