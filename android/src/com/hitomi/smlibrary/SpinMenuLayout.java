@@ -60,7 +60,7 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 	private float delayAngle, perAngle;
 
 	/**
-	 * 半径：从底边到 Child 高度的中点
+	 * Radius: from the bottom to the midpoint of Child height
 	 */
 	private float radius;
 
@@ -112,14 +112,14 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-		// 宽度、高度与父容器一致
+		// The width and height are consistent with the parent container
 		ViewGroup parent = ((ViewGroup) getParent());
 		int measureWidth = parent.getMeasuredWidth();
 		int measureHeight = parent.getMeasuredHeight();
 		setMeasuredDimension(measureWidth, measureHeight);
 
 		if (getChildCount() > 0) {
-			// 对子元素进行测量
+			// Measure the child elements
 			measureChildren(widthMeasureSpec, heightMeasureSpec);
 		}
 	}
@@ -198,7 +198,8 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 			}
 			if (!isCyclic
 					&& (delayAngle < minFlingAngle || delayAngle > maxFlingAngle)) {
-				// 当前不是循环滚动模式，且转动的角度超出了可转角度的范围
+				// When the current is not a circular rolling mode, and the
+				// angle of rotation is beyond the range of the rotatable angle
 				perDiffAngle /= DELAY_ANGLE_RATIO;
 			}
 			delayAngle += perDiffAngle;
@@ -227,7 +228,7 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 						300);
 			}
 
-			if (!isCyclic) { // 当不是循环转动时，需要校正角度
+			if (!isCyclic) { // When not rotating, you need to correct the angle
 				if (scroller.getFinalX() >= maxFlingAngle) {
 					scroller.setFinalX(maxFlingAngle);
 				} else if (scroller.getFinalX() <= minFlingAngle) {
@@ -245,7 +246,9 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 	 * Calculate the minimum and maximum inertia scrolling angles
 	 */
 	private void computeFlingLimitAngle() {
-		// 因为中心点在底边中点（坐标系相反），故这里计算的min和max与实际相反
+		// Since the center point is at the midpoint of the bottom (the
+		// coordinate system is opposite), the min and max are calculated from
+		// the opposite
 		minFlingAngle = isCyclic ? Integer.MIN_VALUE : -ANGLE_SPACE
 				* (getChildCount() - 1);
 		maxFlingAngle = isCyclic ? Integer.MAX_VALUE : 0;
@@ -260,7 +263,9 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 	 * @return
 	 */
 	private float computeAngle(float xTouch, float yTouch) {
-		// 圆心点在底边的中点上，根据圆心点转化为对应坐标x, y
+		// he center point is at the midpoint of the bottom edge and is
+		// converted to the corresponding coordinate x, y according to the
+		// center point
 		float x = Math.abs(xTouch - getMeasuredWidth() / 2);
 		float y = Math.abs(getMeasuredHeight() - yTouch);
 		return (float) (Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI);
@@ -276,9 +281,9 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 		int endAngle;
 		if (remainder > 0) {
 			if (Math.abs(remainder) > ANGLE_SPACE / 2) {
-				if (perAngle < 0) { // 逆时针
+				if (perAngle < 0) { // Counterclockwise
 					endAngle = ANGLE_SPACE - remainder;
-				} else { // 顺时针
+				} else { // Clockwise
 					endAngle = ANGLE_SPACE - Math.abs(remainder);
 				}
 			} else {
@@ -332,7 +337,9 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 		int selPos = getSelectedPosition();
 		if (Math.abs(perAngle) <= touchSlopAngle) {
 			if (index != selPos) {
-				// 当前点击的是左右两边的一个 Item，则把点击的 Item 滚动到选中[正中间]位置
+				// The current click on the left and right of a Item, then click
+				// the Item of the item to scroll to select the [middle]
+				// position
 				scroller.startScroll(-getSelectedPosition() * ANGLE_SPACE, 0,
 						computeClickToEndAngle(index, selPos), 0, 300);
 				post(this);
@@ -360,9 +367,9 @@ public class SpinMenuLayout extends ViewGroup implements Runnable,
 	}
 
 	/**
-	 * 获取圆形转动菜单的真正半径<br/>
-	 * 半径是依据 child 的高度加上 SpinMenuLayout 的宽度的一半<br/>
-	 * 所以当没有 child 的时候，半径取值为 -1
+	 * Gets the true radius of the circular rotation menu<br/>
+	 * he radius is based child 的高度加上 SpinMenuLayout 的宽度的一半<br/>
+	 * So when there is no child: The radius value is -1
 	 * 
 	 * @return
 	 */

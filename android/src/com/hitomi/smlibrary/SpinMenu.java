@@ -174,7 +174,7 @@ public class SpinMenu extends FrameLayout {
 		super.onFinishInflate();
 		Log.d(LCAT, "onFinishInflate >>>>>>>>>>>>>");
 		@IdRes
-		final int smLayoutId = 0x6F060505;
+		final int smLayoutId = 8889;
 		ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
 				MATCH_PARENT, MATCH_PARENT);
 		spinMenuLayout = new SpinMenuLayout(getContext());
