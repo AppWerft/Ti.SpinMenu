@@ -190,7 +190,8 @@ public class SpinMenu extends FrameLayout {
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 		if (init && smItemLayoutList.size() > 0) {
-			// 根据 scaleRatio 去调整菜单中 item 视图的整体大小
+			// according to scaleRatio To adjust the overall size of the item
+			// view in the menu
 			int pagerWidth = (int) (getMeasuredWidth() * scaleRatio);
 			int pagerHeight = (int) (getMeasuredHeight() * scaleRatio);
 			SMItemLayout.LayoutParams containerLayoutParams = new SMItemLayout.LayoutParams(
@@ -202,28 +203,31 @@ public class SpinMenu extends FrameLayout {
 				frameContainer = (FrameLayout) smItemLayout
 						.findViewWithTag(TAG_ITEM_CONTAINER);
 				frameContainer.setLayoutParams(containerLayoutParams);
-				if (i == 0) { // 初始菜单的时候，默认显示第一个 Fragment
+				if (i == 0) { // When the initial menu is displayed, the first
+								// is displayed by default Fragment
 					FrameLayout pagerLayout = (FrameLayout) smItemLayout
 							.findViewWithTag(TAG_ITEM_PAGER);
-					// 先移除第一个包含 Fragment 的布局
+					// Remove the first layout containing the Fragment first
 					frameContainer.removeView(pagerLayout);
-					// 创建一个用来占位的 FrameLayout
+					// Create a place for use FrameLayout
 					FrameLayout holderLayout = new FrameLayout(getContext());
 					LinearLayout.LayoutParams pagerLinLayParams = new LinearLayout.LayoutParams(
 							MATCH_PARENT, MATCH_PARENT);
 					holderLayout.setLayoutParams(pagerLinLayParams);
 
-					// 将占位的 FrameLayout 添加到布局中的 frameContainer 中
+					// 将占位的 FrameLayout Added to the layout frameContainer 中
 					frameContainer.addView(holderLayout, 0);
 
-					// 添加 第一个包含 Fragment 的布局添加到 SpinMenu 中
+					// Add the first include Fragment The layout is added to
+					// SpinMenu 中
 					FrameLayout.LayoutParams pagerFrameParams = new FrameLayout.LayoutParams(
 							MATCH_PARENT, MATCH_PARENT);
 					pagerLayout.setLayoutParams(pagerFrameParams);
 					addView(pagerLayout);
 				}
 
-				// 位于菜单中当前显示 Fragment 两边的 SMItemlayout 左右移动 TRAN_SKNEW_VALUE 个距离
+				// Is currently displayed in the menu Fragment 两边的 SMItemlayout
+				// Move around the TRAN_SKNEW_VALUE distance
 				if (spinMenuLayout.getSelectedPosition() + 1 == i
 						|| (spinMenuLayout.isCyclic() && spinMenuLayout
 								.getMenuItemCount() - i == spinMenuLayout
