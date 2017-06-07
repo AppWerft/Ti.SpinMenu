@@ -38,6 +38,7 @@ public class TiSpinMenu extends TiUIView implements
 	private final ArrayList<TiViewProxy> viewProxies;
 	private ViewPager viewPager;
 	private int curIndex = 0;
+	private static final int CONTENT_VIEW_ID = 10101010;
 
 	/* Constructor */
 

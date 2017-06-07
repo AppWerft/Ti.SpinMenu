@@ -83,14 +83,12 @@ public class SpinMenu extends FrameLayout {
 	private int menuState = MENU_STATE_CLOSED; // The current menu status, which
 												// is turned off by default
 	private int touchSlop = 8; // The threshold between sliding and touch
-
 	private OnSpinSelectedListener onSpinSelectedListener = new OnSpinSelectedListener() {
 		@Override
 		public void onSpinSelected(int position) {
 			log("SpinMenu position:" + position);
 		}
 	};
-
 	private OnMenuSelectedListener onMenuSelectedListener = new OnMenuSelectedListener() {
 		@Override
 		public void onMenuSelected(SMItemLayout smItemLayout) {
